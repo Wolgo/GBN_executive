@@ -2,7 +2,7 @@
 
 from executive.actions.models import Action, ScheduledAction, Project
 from executive.tools.cron import CronHandler
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 import pytz
 import re
 
@@ -26,14 +26,14 @@ class DecisionMaker(object):
 
     def __fillprojectaction(self, project):
         lastcompletednotice = ""
-        lastdone = Action.objects.filter(project_id=empty.pk, completed=True).order_by('-deadline')
+        lastdone = Action.objects.filter(project_id=project.pk, completed=True).order_by('-deadline')
         if lastdone:
             lastdone = lastdone[0]
             lastcompletednotice += "\nlast completed action: {lastdone[0].name} at {lastdone[0].deadline}".format(**locals())
         return self._new(
-            "Add an action to project {empty.id}: {empty.name}".format(**locals()) + lastcompletednotice,
+            "Add an action to project {project.id}: {project.name}".format(**locals()) + lastcompletednotice,
             date.today(),
-            project = empty
+            project = project
             )        
 
     def _timedaction(self):
@@ -43,6 +43,12 @@ class DecisionMaker(object):
             lastenabled = cron.lastenabled()
             if not lastenabled:
                 return None
+            else:
+                action.timeenabled = datetime(lastenabled.year,
+                                              lastenabled.month,
+                                              lastenabled.day,
+                                              lastenabled.hour,
+                                              lastenabled.minute)
             if action.lastcompleted:
                 lastcompleted = action.lastcompleted.astimezone(pytz.timezone('Europe/Amsterdam'))
             else:
@@ -76,7 +82,7 @@ class DecisionMaker(object):
     def _printout(self, action):
         _class = action.__class__
         if _class == ScheduledAction:
-            print("[{action.id}]: {action.cron}: {action.name}".format(**locals()))
+            print("[{action.id}]: {action.timeenabled}: {action.name}".format(**locals()))
         else:
             upcoming = self._upcoming()
             print("Next scheduled action: {upcoming[1].name} at {upcoming[0]}".format(**locals()))

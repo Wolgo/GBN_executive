@@ -13,9 +13,15 @@ class CronHandler(object):
         parseorder = ['minute','hour','day','month','weekday','year']
         timedict = [(parseorder[i], _lis) for i, _lis in enumerate(self._parse())]
 
+        maxdata = {}
+        for unit in timedict:
+            maxdata[unit[0]] = max(unit[1])
+        month_maxday = self._maxday(maxdata['month'], maxdata['year'])
+        if maxdata['day'] > month_maxday:
+            maxdata['day'] = month_maxday
 
         maxdate = pytz.timezone('Europe/Amsterdam').localize(
-            datetime(**{k : max(v) for k, v in timedict if not k=='weekday'})
+            datetime(**{k : v for k, v in maxdata.items() if not k=='weekday'})
             )
         if maxdate < t:
             return None
@@ -35,7 +41,16 @@ class CronHandler(object):
             else:
                 break
             t += timedelta(days = 1)
-        return datetime(t.year,t.month,t.day,t.hour,t.minute)
+        return t
+
+    def _maxday(self, month, year):
+        n_days_month = {
+            1 : 31,2 : 28,3 : 31,4 : 30,
+            5 : 31,6 : 30,7 : 31,8 : 31,
+            9 : 30,10 : 31,11 : 30,12 : 31}
+        if year % 4 == 0:
+            n_days_month[2] = 29
+        return n_days_month[month]
 
     def _firstenabled(self):
         data = self._parse()
@@ -72,7 +87,7 @@ class CronHandler(object):
             else:
                 break
             t -= timedelta(days = 1)
-        return datetime(t.year,t.month,t.day,t.hour,t.minute)
+        return t
 
     def _parse(self, cron = None):
         if not cron:
@@ -83,11 +98,12 @@ class CronHandler(object):
             if "-" in tab:
                 start, finish = tab.split("-")
                 result.append(range(int(start), int(finish)))
-            elif "*" in tab and "/" in tab:
-                interval = int(tab.split("/")[1])
-                result.append(1, range(*ranges[i])[::interval])
-            elif tab == "*":
-                result.append(range(*ranges[i]))
+            elif "*" in tab:
+                _list = range(*ranges[i])
+                if "/" in tab:
+                    interval = int(tab.split("/")[1])
+                    _list = _list[::interval]
+                result.append(_list)
             elif "," in tab:
                 result.append([int(a) for a in tab.split(",")])
             elif tab.isdigit():
