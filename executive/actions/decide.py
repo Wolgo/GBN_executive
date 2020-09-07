@@ -28,7 +28,6 @@ class DecisionMaker(object):
         lastcompletednotice = ""
         lastdone = Action.objects.filter(project_id=project.pk, completed=True).order_by('-deadline')
         if lastdone:
-            lastdone = lastdone[0]
             lastcompletednotice += "\nlast completed action: {lastdone[0].name} at {lastdone[0].deadline}".format(**locals())
         return self._new(
             "Add an action to project {project.id}: {project.name}".format(**locals()) + lastcompletednotice,
@@ -85,7 +84,8 @@ class DecisionMaker(object):
             print("[{action.id}]: {action.timeenabled}: {action.name}".format(**locals()))
         else:
             upcoming = self._upcoming()
-            print("Next scheduled action: {upcoming[1].name} at {upcoming[0]}".format(**locals()))
+            if upcoming:
+                print("Next scheduled action: {upcoming[1].name} at {upcoming[0]}".format(**locals()))
 
         if _class == Action:
             if action.project_id:
@@ -102,7 +102,8 @@ class DecisionMaker(object):
             _next = CronHandler(a.cron).nextenabled()
             if _next:
                 _nexttimes.append((_next, a))
-        return list(sorted(_nexttimes))[0] #return the first time for action along with the action
+        if _nexttimes:
+            return list(sorted(_nexttimes))[0] #return the first time for action along with the action
 
     def _getparents(self, project):
         if not hasattr(project, 'parent_id') or not project.parent_id:

@@ -16,7 +16,9 @@ class CronHandler(object):
         maxdata = {}
         for unit in timedict:
             maxdata[unit[0]] = max(unit[1])
+
         month_maxday = self._maxday(maxdata['month'], maxdata['year'])
+
         if maxdata['day'] > month_maxday:
             maxdata['day'] = month_maxday
 

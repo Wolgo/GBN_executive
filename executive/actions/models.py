@@ -3,11 +3,7 @@ from json_field import JSONField
 
 class Project(models.Model):
     name = models.CharField(max_length=1000)
-    parent = models.ForeignKey('self')
-
-    def get_parent(self):
-        if hasattr(self, 'parent') and self.__class__.objects.filter(pk = self.parent.id).exists():
-            return self.parent
+    parent = models.ForeignKey('self', null=True)
 
 class Action(models.Model):
     name = models.CharField(max_length = 1000)

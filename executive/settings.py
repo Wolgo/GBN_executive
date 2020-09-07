@@ -12,7 +12,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/home/toon/Git/executive/db.s3db',
+        'NAME': r'executive.db',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -120,7 +120,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'executive.actions',
-    'django_evolution',
     'json_field',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
