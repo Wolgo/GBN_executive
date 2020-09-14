@@ -1,39 +1,46 @@
 executive
 =========
 
-Ease your precious executive function with a command-line task system that decides for you.
+Preserve your precious executive function with a command-line task system that decides for you.
 
 **Installation**
+=========
 
-Pull everything from Github
+Install Python 2.7 from here: https://www.python.org/downloads/release/python-2717/
+
+**Pull everything from Github**
 
 `git clone https://github.com/ToonAlfrink/executive /path/to/executive`
 
-Make sure your pythonpath contains the directory you just pulled
+**Make sure your pythonpath contains the directory you just pulled**
 
-`export PYTHONPATH=/path/to/executive`
+unix: `export PYTHONPATH=/path/to/executive`
+windows: `set export PYTHONPATH=/path/to/executive`
 
-Install dependencies
+**Install dependencies**
 
 `pip install django==1.4`
 `pip install pytz`
 
-on mac you may have some locale issues:
+**on mac you may have some locale issues**
 
   `export LC_ALL=en_US.UTF-8`
   `export LANG=en_us.UTF-8`
   
-Help Django find itself
+**Help Django find itself**
 
-`export DJANGO_SETTINGS_MODULE='executive.settings'`
-  
-Set up the database
+unix: `export DJANGO_SETTINGS_MODULE='executive.settings'`
+
+windows: `set DJANGO_SETTINGS_MODULE=executive.settings`
+
+**Set up the database**
 
 `cd path/to/executive`
 
 `python manage.py syncdb`
 
 **Usage**
+=========
 
 ```
 $ python executive/actions/decide.py
