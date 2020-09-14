@@ -15,6 +15,7 @@ Install Python 2.7 from here: https://www.python.org/downloads/release/python-27
 **Make sure your pythonpath contains the directory you just pulled**
 
 unix: `export PYTHONPATH=/path/to/executive`
+
 windows: `set export PYTHONPATH=/path/to/executive`
 
 **Install dependencies**
