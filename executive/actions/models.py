@@ -1,5 +1,4 @@
 from django.db import models
-from json_field import JSONField
 
 class Project(models.Model):
     name = models.CharField(max_length=1000)
