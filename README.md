@@ -20,25 +20,13 @@ windows: `set export PYTHONPATH=/path/to/executive`
 
 **Install dependencies**
 
-`pip install django==1.4`
+`pip install peewee`
 `pip install pytz`
 
 **on mac you may have some locale issues**
 
   `export LC_ALL=en_US.UTF-8`
   `export LANG=en_us.UTF-8`
-  
-**Help Django find itself**
-
-unix: `export DJANGO_SETTINGS_MODULE='executive.settings'`
-
-windows: `set DJANGO_SETTINGS_MODULE=executive.settings`
-
-**Set up the database**
-
-`cd path/to/executive`
-
-`python manage.py syncdb`
 
 **Usage**
 =========
