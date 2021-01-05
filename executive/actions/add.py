@@ -15,7 +15,7 @@ class AddAction(object):
             options[option] = raw_input("{option}? \n > ".format(**locals())).strip()
         if 'project' in options.keys():
             if options['project']:
-                options['project'] = Project.objects.get(pk = int(options['project']))
+                options['project'] = Project[options['project']]
             else:
                 options['project'] = None
         return options

@@ -14,7 +14,7 @@ class DecisionMaker(object):
 
     def _maintenanceaction(self):
         empty_project = self._empty_project()
-        if Project.objects.all().count() == 0:
+        if len(Project.select()) == 0:
             return self.__newprojectaction()
         elif empty_project:
             return self.__fillprojectaction(empty_project)
@@ -26,7 +26,7 @@ class DecisionMaker(object):
 
     def __fillprojectaction(self, project):
         lastcompletednotice = ""
-        lastdone = Action.objects.filter(project_id=project.pk, completed=True).order_by('-deadline')
+        lastdone = Action.select().filter(Action.project_id==project.id, Action.completed == True).order_by(Action.deadline.desc())
         if lastdone:
             lastcompletednotice += "\nlast completed action: {lastdone[0].name} at {lastdone[0].deadline}".format(**locals())
         return self._new(
@@ -36,7 +36,7 @@ class DecisionMaker(object):
             )        
 
     def _timedaction(self):
-        actions = ScheduledAction.objects.all()
+        actions = ScheduledAction.select()
         for action in actions:
             cron = CronHandler(action.cron)
             lastenabled = cron.lastenabled()
@@ -56,7 +56,7 @@ class DecisionMaker(object):
                 return action
 
     def _nextaction(self):
-        actions = Action.objects.filter(completed = False)
+        actions = Action.select().where(Action.completed == False)
         nextaction = actions[0] 
         for a in actions:
             if a.deadline < nextaction.deadline:
@@ -72,9 +72,9 @@ class DecisionMaker(object):
         return nextaction
 
     def _empty_project(self):
-        for p in Project.objects.all():
-            if Action.objects.filter(project = p.id, completed = False).count() == 0:
-                if Project.objects.filter(parent = p.id).count() == 0:
+        for p in Project.select():
+            if len(Action.select().where(Action.project == p.id, Action.completed == False)) == 0:
+                if len(Project.select().where(Project.parent == p.id)) == 0:
                     return p
         return None
 
@@ -89,14 +89,14 @@ class DecisionMaker(object):
 
         if _class == Action:
             if action.project_id:
-                project_str = self._getparents(Project.objects.get(pk = action.project_id))
+                project_str = self._getparents(Project[action.project_id])
             else:
                 project_str = ""
             print("{project_str} \n {action.id}: {action.deadline}: {action.name}".format(**locals()))
 
     def _upcoming(self):
         """What timed action is next up?"""
-        actions = ScheduledAction.objects.all()
+        actions = ScheduledAction.select()
         _nexttimes = []
         for a in actions:
             _next = CronHandler(a.cron).nextenabled()
@@ -109,7 +109,7 @@ class DecisionMaker(object):
         if not hasattr(project, 'parent_id') or not project.parent_id:
             return "> " + project.name
         else:
-            parent = Project.objects.get(pk = project.parent_id)
+            parent = Project[project.parent_id]
             return self._getparents(parent) + "\n> " + project.name
 
 

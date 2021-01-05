@@ -1,18 +1,27 @@
-from django.db import models
+import peewee as orm
 
-class Project(models.Model):
-    name = models.CharField(max_length=1000)
-    parent = models.ForeignKey('self', null=True)
+db = orm.SqliteDatabase('executive.db')
 
-class Action(models.Model):
-    name = models.CharField(max_length = 1000)
-    deadline = models.DateField()
-    project = models.ForeignKey(Project, null=True)
-    completed = models.BooleanField(default = False)
-    context = models.CharField(max_length = 1000)
+class BaseModel(orm.Model):
+    class Meta:
+        database = orm.SqliteDatabase('executive.db')
 
-class ScheduledAction(models.Model):
+class Project(BaseModel):
+    name = orm.CharField()
+    parent = orm.ForeignKeyField('self', null=True, backref='children')
+
+class Action(BaseModel):
+    name = orm.CharField()
+    deadline = orm.DateField()
+    project = orm.ForeignKeyField(Project, null=True)
+    completed = orm.BooleanField(default = False)
+    context = orm.CharField(null = True)
+
+class ScheduledAction(BaseModel):
     """Scheduled action have a period within which they are active."""
-    name = models.CharField(max_length = 1000)
-    cron = models.CharField(max_length = 50)
-    lastcompleted = models.DateTimeField(null = True)
+    name = orm.CharField()
+    cron = orm.CharField()
+    lastcompleted = orm.DateTimeField(null = True)
+
+db.connect()
+db.create_tables([Project, Action, ScheduledAction])

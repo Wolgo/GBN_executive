@@ -7,10 +7,10 @@ class CompleteAction(object):
     def run(self):
         options = argv[1:]
         if options[0] == "-s":
-            action = ScheduledAction.objects.get(pk = options[1])
+            action = ScheduledAction[options[1]]
             action.lastcompleted = datetime.now(timezone('Europe/Amsterdam'))
         else:
-            action = Action.objects.get(pk = options[0])
+            action = Action[options[0]]
             action.completed = True
         action.save()
         self._reward(action)
