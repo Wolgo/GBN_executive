@@ -1,6 +1,8 @@
 """Handle the cron entries of scheduled actions"""
 from datetime import datetime, timedelta
+
 import pytz
+
 
 class CronHandler(object):
     def __init__(self, cron):
@@ -8,9 +10,9 @@ class CronHandler(object):
 
     def nextenabled(self):
         t = datetime.now(pytz.timezone('Europe/Amsterdam'))
-        t -= timedelta(seconds = t.second)
-        #check if it will ever enable
-        parseorder = ['minute','hour','day','month','weekday','year']
+        t -= timedelta(seconds=t.second)
+        # check if it will ever enable
+        parseorder = ['minute', 'hour', 'day', 'month', 'weekday', 'year']
         timedict = [(parseorder[i], _lis) for i, _lis in enumerate(self._parse())]
 
         maxdata = {}
@@ -23,79 +25,80 @@ class CronHandler(object):
             maxdata['day'] = month_maxday
 
         maxdate = pytz.timezone('Europe/Amsterdam').localize(
-            datetime(**{k : v for k, v in maxdata.items() if not k=='weekday'})
-            )
+            datetime(**{k: v for k, v in maxdata.items() if not k == 'weekday'})
+        )
         if maxdate < t:
             return None
 
-        #get time of next occurrence
+        # get time of next occurrence
         for timeunit, _list in timedict[:2]:
             while True:
-                if getattr(t, timeunit) in _list: 
+                if getattr(t, timeunit) in _list:
                     break
-                t += timedelta(**{timeunit + "s" : 1})
+                t += timedelta(**{timeunit + "s": 1})
 
-        #get day of next occurrence
+        # get day of next occurrence
         timedict = dict(timedict)
         while True:
             if t.year not in timedict['year'] or t.month not in timedict['month'] or t.day not in timedict['day'] or t.weekday() not in timedict['weekday']:
                 pass
             else:
                 break
-            t += timedelta(days = 1)
+            t += timedelta(days=1)
         return t
 
     def _maxday(self, month, year):
         n_days_month = {
-            1 : 31,2 : 28,3 : 31,4 : 30,
-            5 : 31,6 : 30,7 : 31,8 : 31,
-            9 : 30,10 : 31,11 : 30,12 : 31}
+            1: 31, 2: 28, 3: 31, 4: 30,
+            5: 31, 6: 30, 7: 31, 8: 31,
+            9: 30, 10: 31, 11: 30, 12: 31}
         if year % 4 == 0:
             n_days_month[2] = 29
         return n_days_month[month]
 
     def _firstenabled(self):
         data = self._parse()
-        d = datetime(year = data[5][0],
-                     month = data[3][0],
-                     day = data[2][0],
-                     hour = data[1][0],
-                     minute = data[0][0])
+        d = datetime(year=data[5][0],
+                     month=data[3][0],
+                     day=data[2][0],
+                     hour=data[1][0],
+                     minute=data[0][0])
         try:
             d = pytz.timezone('Europe/Amsterdam').localize(d)
-        except OverflowError: #some silly date like 0000-00-00
+        except OverflowError:  # some silly date like 0000-00-00
             d = pytz.UTC.localize(d)
         return d
 
     def lastenabled(self):
         t = datetime.now(pytz.timezone('Europe/Amsterdam'))
-        if self._firstenabled() > t: #hasn't been enabled yet
+        if self._firstenabled() > t:  # hasn't been enabled yet
             return None
-        #check if it will ever enable
-        parseorder = ['minute','hour','day','month','weekday','year']
+        # check if it will ever enable
+        parseorder = ['minute', 'hour', 'day', 'month', 'weekday', 'year']
         timedict = [(parseorder[i], _lis) for i, _lis in enumerate(self._parse())]
-        
-        #get time of last occurrence
+
+        # get time of last occurrence
         for timeunit, _list in list(reversed(timedict))[4:]:
             while True:
-                if getattr(t, timeunit) in _list: 
+                if getattr(t, timeunit) in _list:
                     break
-                t -= timedelta(**{timeunit + "s" : 1})
-        #get day of last occurrence
+                t -= timedelta(**{timeunit + "s": 1})
+        # get day of last occurrence
         timedict = dict(timedict)
         while True:
-            if t.year not in timedict['year'] or t.month not in timedict['month'] or t.day not in timedict['day'] or t.weekday() not in timedict['weekday']:
+            if t.year not in timedict['year'] or t.month not in timedict['month'] or t.day not in timedict[
+                'day'] or t.weekday() not in timedict['weekday']:
                 pass
             else:
                 break
-            t -= timedelta(days = 1)
+            t -= timedelta(days=1)
         return t
 
-    def _parse(self, cron = None):
+    def _parse(self, cron=None):
         if not cron:
             cron = self.cron
         result = []
-        ranges = {0:(60,),1:(24,),2:(1,32),3:(1,13),4:(7,),5:(1,3000)}
+        ranges = {0: (60,), 1: (24,), 2: (1, 32), 3: (1, 13), 4: (7,), 5: (1, 3000)}
         for i, tab in enumerate(cron.split()):
             if "-" in tab:
                 start, finish = tab.split("-")

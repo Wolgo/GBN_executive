@@ -1,7 +1,10 @@
-from sys import argv
-from executive.actions.models import Action, ScheduledAction
 from datetime import datetime
+from sys import argv
+
 from pytz import timezone
+
+from executive.actions.models import Action, ScheduledAction
+
 
 class CompleteAction(object):
     def run(self):
@@ -19,6 +22,7 @@ class CompleteAction(object):
         print("Well done!")
         print("Set action '{action.name}' to completed.".format(**locals()))
         print("call decide.py for your next action")
+
 
 if __name__ == "__main__":
     CompleteAction().run()
