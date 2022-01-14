@@ -4,7 +4,7 @@ from executive.actions.models import Project
 
 if __name__ == "__main__":
     arguments = argv[1:]
-    p = Project(name = arguments[0])
+    p = Project(name=arguments[0])
     if len(arguments) == 2:
         p.parent = Project[arguments[1]]
     p.save()
