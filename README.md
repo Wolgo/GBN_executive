@@ -1,16 +1,79 @@
 executive
 =========
 
-Preserve your precious executive function with a command-line task system that decides for you.
+A proof of concept for an GUI re-imagination of the original executive.
+
+Roadmap
+=========
+**Step -1:**
+
+Try to revert the fact that we sold Executive, as it's not a product ready for sale. This way we prevent the cost of
+developing it.
+
+Investigate if there are other product currently not fit for sale, to prevent this situation occuring again.
+
+**Step 0:**
+
+Investigate the original documentation of Executive.
+
+Investigate what the description is of Executive in the contact we sold it in.
+
+Investigate why/how current users use Executive.
+
+Investigate what feedback is available about Executive.
+
+Investigate what other products are part of the set of tools Executive was included in.
+
+These steps are needed to create a product that actually fits expectation of the clients.
+
+Acquire the styling of GBN to make the proof of concept fit in.
+
+**Step 0.5**:
+The board of directions should approve the Proof of concept
+
+**Step 1:**
+
+Create a clear set of requirements (or expectations) and vision for Executive. (Which likely includes: An online
+database with user authentication, an actual date input field, multiple users being able to share project, a more
+complete ui, console support for existing customers, protection against sql injections, an automated installation and
+tests. )
+
+Move a senior Dev with experience with Azure & CI/CD from one of the other teams to lead this team.
+
+Additionally add an UI designer if one is not already present, the GUI aspect is crucial for the succes of Executive
+
+The Team originally responsible for this project should be trained in at least CI/CD.
+
+**Step 2:**
+
+Create a minimum viable product including all base functionalities current clients use.
+
+Create an UI design that fullfills the role of decide.py
+
+Create an executable that installs the product as an stand-alone desktop app. (Or go fully web-app)
+
+**Step 3:**
+
+Consider whether the minimum viable product is able to compete with existing product and be profitable.
+
+Create automated tests for the minimum viable product
+
+Consider integration with other products.
+
+**Testing strategy:**
+
+I would approach this in three ways (besides general testing):
+
+Database queries should be tested to work properly
+
+Buttons should be tested to trigger the correct Database queries
+
+A test should be done before release that all functionalities work in the UI.
 
 **Installation**
 =========
 
-Install Python 2.7 from here: https://www.python.org/downloads/release/python-2717/
-
-**Pull everything from Github**
-
-`git clone https://github.com/ToonAlfrink/executive /path/to/executive`
+Install Python 3.8
 
 **Make sure your pythonpath contains the directory you just pulled**
 
@@ -20,78 +83,10 @@ windows: `set export PYTHONPATH=/path/to/executive`
 
 **Install dependencies**
 
-`pip install peewee`
-`pip install pytz`
-
-**on mac you may have some locale issues**
-
-  `export LC_ALL=en_US.UTF-8`
-  `export LANG=en_us.UTF-8`
+run setup.py
 
 **Usage**
 =========
 
-```
-$ python executive/actions/decide.py
- 
- 1: 2020-09-07: Add a first project using 'ex addproject (name) [parent id]'
-$ python executive/actions/addproject.py demo
-created project 1: demo
-$ python executive/actions/decide.py
-> demo 
- 2: 2020-09-07: Add an action to project 1: demo
-$ python executive/actions/add.py
-name? 
- > demonstrate usage of executive
-deadline? 
- > 2020-10-01
-project? 
- > 1
-context? 
- > 
-$ python executive/actions/decide.py
- 
- 1: 2020-09-07: Add a first project using 'ex addproject (name) [parent id]'
-$ python executive/actions/done.py 1
-Well done!
-Set action 'Add a first project using 'ex addproject (name) [parent id]'' to completed.
-call decide.py for your next action
-$ python executive/actions/decide.py
-> demo 
- 2: 2020-09-07: Add an action to project 1: demo
-$ python executive/actions/done.py 2
-Well done!
-Set action 'Add an action to project 1: demo' to completed.
-call decide.py for your next action
-$ python executive/actions/decide.py
-> demo 
- 3: 2020-10-01: demonstrate usage of executive
-$ python executive/actions/add.py
-name? 
- > come up with some backlog items for executive
-deadline? 
- > 2020-10-02
-project? 
- > 1
-context? 
- > 
-$ python executive/actions/add.py
-name? 
- > have someone do a test run of the installation instructions
-deadline? 
- > 2020-10-03
-project? 
- > 1
-context? 
- > 
-$ python executive/actions/decide.py
-> demo 
- 3: 2020-10-01: demonstrate usage of executive
-$ python executive/actions/done.py 3
-Well done!
-Set action 'demonstrate usage of executive' to completed.
-call decide.py for your next action
-```
-
-
-
+Right-clicking an action switches it completion status. Beware: Removing the orignal projects/actions will not save as
+the demo database is reset on each run.

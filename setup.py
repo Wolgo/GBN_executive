@@ -6,5 +6,5 @@ setup(
     description='Preserve your precious executive function with a command-line task system that decides for you.',
     author='Erik Wiegel',
     author_email='wiegel.erik@gmail.com',
-    install_requires=['django', 'pytz', 'peewee']
+    install_requires=['django', 'pytz', 'peewee', 'wxpython', 'ObjectListView']
 )
